@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-tk)ysei3(z#2+!l*8jr6$wlp74r9g&2zog&^pt&inpm*625!u+
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+APPEND_SLASH = True
 
 # Application definition
 
@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "applications.products",
+    "applications.orders",
+
 ]
 
 MIDDLEWARE = [
