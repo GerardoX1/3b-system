@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from applications.orders.models import Orders
+from applications.orders.serializers import OrdersSerializer
+from rest_framework import generics
 
-# Create your views here.
+
+class ListOrders(generics.ListCreateAPIView):
+    queryset = Orders.objects.all()
+    serializer_class = OrdersSerializer
