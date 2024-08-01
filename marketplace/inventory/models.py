@@ -1,18 +1,10 @@
 import uuid
 
 from django.db import models
+from inventory.constants import CATEGORY_TYPES, TRANSACTION_TYPES
 
 
 class Products(models.Model):
-    CATEGORY_TYPES = [
-        ("Electronics", "Electronics"),
-        ("Home & Kitchen", "Home & Kitchen"),
-        ("Books", "Books"),
-        ("Beauty & Personal Care", "Beauty & Personal Care"),
-        ("Clothing", "Clothing"),
-        ("Sports & Outdoors", "Sports & Outdoors"),
-        ("Toys & Games", "Toys & Games"),
-    ]
     _id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sku = models.CharField(max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,10 +20,6 @@ class Products(models.Model):
 
 
 class Orders(models.Model):
-    TRANSACTION_TYPES = [
-        ("in", "In"),
-        ("out", "Out"),
-    ]
     _id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     transaction_type = models.CharField(max_length=15, choices=TRANSACTION_TYPES)

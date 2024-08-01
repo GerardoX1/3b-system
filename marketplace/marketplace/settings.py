@@ -51,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "marketplace.middleware.CustomResponseMiddleware",
+    "marketplace.middleware.CustomErrorHandlerMiddleware",
 ]
 
 ROOT_URLCONF = "marketplace.urls"
