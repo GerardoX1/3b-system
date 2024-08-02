@@ -33,3 +33,9 @@ class UpdateProducts(UpdateAPIView):
 class CreateOrders(CreateAPIView):
     queryset = Orders.objects.all()
     serializer_class = OrdersSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({"status": "purchase made"}, status=status.HTTP_201_CREATED)
