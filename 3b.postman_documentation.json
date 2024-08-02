@@ -1,0 +1,616 @@
+{
+	"info": {
+		"_postman_id": "fd3e356f-cba7-46fd-80f0-2038b4ab2e2a",
+		"name": "3b",
+		"description": "# Gestión de Inventarios\n\nEsta documentación describe cómo crear una aplicación en Python utilizando el framework Django para gestionar productos e inventarios. La aplicación expone una API REST y un job que dispara alertas cada x tiempo cuando el stock de un producto es bajo. Además, incluye pruebas unitarias y está empaquetada en un contenedor Docker.\n\n## Requisitos\n\n- Python 3.8+\n- Django 4.0+\n- Docker \n- Posgres\n- Celery\n- Flower (Monitoreo)\n\n## Configuración de desarrollo\n\n### Clonar el Repositorio\n\n```sh\ngit clone https://github.com/GerardoX1/3b-system.git\ncd 3b-system\n\n### Crear y Activar Un entorno Virtual\n\n```sh\npython3 -m venv venv\nsource venv/bin/activate  # En Windows usa `venv\\Scripts\\activate`\n\n### Instala dependencias\n\n```sh\npip install -r requirements.txt\n\n### Configuración de la Aplicación\n#### Configuración de Django\n\nAsegúrate de configurar tu base de datos en settings.py según tus necesidades.\n\ny bueno todas esas cosas como redis el celery y esas cositas que se tienen que configurar en un buen entorno de trabajo.\n\n### Migraciones\n\nEjecuta las migraciones de la base de datos:\n\n```sh\npython manage.py runserver\n\n\n### Job de Alerta de Stock Bajo\n\nEl job se ejecuta cada 5 min y dispara una alerta (log en la consola) cuando el stock de un producto es inferior a 10.\n\n### Job de Alerta de Stock Bajo\n\nEjecuta las pruebas unitarias con el siguiente comando:\n\n```sh\npytest\n\n### Dockerizate\n\nYa con docker configurado en tu PC lo unico que tienes que hacer es ejecutar el comando:\n\n```sh\ndocker-compose up\n\n\n### Servicios en Docker\n\n- Aplicación Web: Disponible en http://localhost:8000\n- Base de Datos PostgreSQL (disponible en local)\n- Redis \n- Posgres\n- Celery\n- Flower (disponible en localhost:5555)\n\n### Contribuir\n\nLas contribuciones son bienvenidas. Por favor, abre un issue o un pull request en el repositorio.\n\n### Información Personal\n\n#### Sobre Mí\n\nSoy esclavo moderno de dos gatos asi que necesito mas dinerito 🐈‍⬛🐈💵\n\n## Contacto\n\n- **Nombre:** Luis Gerardo Fosado Baños\n- **Email:** [yeralway1@gmail.com]\n- **LinkedIn:** [www.linkedin.com/in/gerardo-fosado-0ab957165](www.linkedin.com/in/gerardo-fosado-0ab957165)\n- **GitHub:** [https://github.com/GerardoX1](https://github.com/GerardoX1)\n\n\nSi deseas más información o discutir cualquier idea de proyecto, no dudes en contactarme.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/api/products",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sku\":\"2345-3456-4567-5678\",\n    \"display_name\":\"Test product 02\",\n    \"description\":\"A product for testing purposes\",\n    \"category\":\"Electronics\",\n    \"unit_price\":99\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/products",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"sku\":\"1234-2345-3456-4567\",\n    \"display_name\":\"Test product 01\",\n    \"description\":\"A product for testing purposes\",\n    \"category\":\"Electronics\",\n    \"unit_price\":100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 14:43:48 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "443"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"a949d21e-6189-4ce3-9fa8-589544007fa5\",\n    \"timestamp\": \"2024-08-02 14:43:48.334474\",\n    \"data\": {\n        \"_id\": \"253d023c-4587-48a1-aeba-6c3d6949cf06\",\n        \"sku\": \"1234-2345-3456-4567\",\n        \"created_at\": \"2024-08-02T14:43:48.331244Z\",\n        \"updated_at\": \"2024-08-02T14:43:48.331307Z\",\n        \"display_name\": \"Test product 01\",\n        \"description\": \"A product for testing purposes\",\n        \"category\": \"Electronics\",\n        \"unit_price\": \"100.00\",\n        \"stock\": 100\n    }\n}"
+				},
+				{
+					"name": "Error field required",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"display_name\":\"Test product 01\",\n    \"description\":\"A product for testing purposes\",\n    \"category\":\"Electronics\",\n    \"unit_price\":100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 14:49:14 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "163"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"72c1eaf3-4c9b-4cd0-85b8-34f6d385fccc\",\n    \"timestamp\": \"2024-08-02 14:49:14.435097\",\n    \"data\": {\n        \"sku\": [\n            \"This field is required.\"\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "/api/inventories/product/{{product_id}}",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/inventories/product/{{product_id}}",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"inventories",
+						"product",
+						"{{product_id}}"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Success",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"add_stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventories/product/bf64d0d5-9e35-44f5-846a-efbde318323e",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"inventories",
+								"product",
+								"bf64d0d5-9e35-44f5-846a-efbde318323e"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 17:11:17 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "PUT, PATCH, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "154"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"df9046a9-7557-4094-890c-3cc7130ddb6e\",\n    \"timestamp\": \"2024-08-02 17:11:17.885704\",\n    \"data\": {\n        \"status\": \"stock updated\"\n    }\n}"
+				},
+				{
+					"name": "Error value invalid",
+					"originalRequest": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"add_stock\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventories/product/bf64d0d5-9e35-44f5-846a-efbde318323e",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"inventories",
+								"product",
+								"bf64d0d5-9e35-44f5-846a-efbde318323e"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 17:14:26 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "PUT, PATCH, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "194"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"cf5d6833-30bd-41b8-8b88-d4b0de26df48\",\n    \"timestamp\": \"2024-08-02 17:14:26.053211\",\n    \"data\": {\n        \"add_stock\": [\n            \"Ensure this value is greater than or equal to 1.\"\n        ]\n    }\n}"
+				}
+			]
+		},
+		{
+			"name": "/api/orders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"product_id\":\"bf64d0d5-9e35-44f5-846a-efbde318323e\",\n    \"quantity\":50\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/orders",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"orders"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "success",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\":\"bf64d0d5-9e35-44f5-846a-efbde318323e\",\n    \"quantity\":50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/orders",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"orders"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "20",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 17:49:11 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "155"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"7c0c0864-0cb5-4532-a77b-d770ba989ef7\",\n    \"timestamp\": \"2024-08-02 17:49:11.514223\",\n    \"data\": {\n        \"status\": \"purchase madeS\"\n    }\n}"
+				},
+				{
+					"name": "error enougt stoke",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\":\"bf64d0d5-9e35-44f5-846a-efbde318323e\",\n    \"quantity\":50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/orders",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 02 Aug 2024 17:50:26 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "WSGIServer/0.2 CPython/3.11.9"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept, Cookie"
+						},
+						{
+							"key": "Allow",
+							"value": "POST, OPTIONS"
+						},
+						{
+							"key": "Content-Length",
+							"value": "180"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "Referrer-Policy",
+							"value": "same-origin"
+						},
+						{
+							"key": "Cross-Origin-Opener-Policy",
+							"value": "same-origin"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"version\": \"1.0.0\",\n    \"process_id\": \"acd4762b-088c-45e6-9224-07046862c2e4\",\n    \"timestamp\": \"2024-08-02 17:50:26.220611\",\n    \"data\": {\n        \"non_field_errors\": [\n            \"Not enough stock available.\"\n        ]\n    }\n}"
+				}
+			]
+		}
+	]
+}
