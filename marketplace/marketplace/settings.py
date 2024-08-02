@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from os import getenv
 from pathlib import Path
 
+from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,6 +32,7 @@ ALLOWED_HOSTS = []
 APPEND_SLASH = True
 
 # Application definition
+EXTERNAL_APPS = ["rest_framework", "django_celery_beat"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -38,9 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
     "inventory",
-]
+] + EXTERNAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -81,11 +83,11 @@ WSGI_APPLICATION = "marketplace.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": getenv("DB_NAME", "default"),
-        "USER": getenv("DB_USER", "default"),
-        "PASSWORD": getenv("DB_PASSWORD", "default"),
-        "HOST": getenv("DB_HOST", "default"),
-        "PORT": getenv("DB_PORT", "default"),
+        "NAME": getenv("DB_NAME"),
+        "USER": getenv("DB_USER"),
+        "PASSWORD": getenv("DB_PASSWORD"),
+        "HOST": getenv("DB_HOST"),
+        "PORT": getenv("DB_PORT"),
     }
 }
 
@@ -129,3 +131,21 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Config Redis
+CELERY_BROKER_URL = getenv("CELERY_BROKER_URL", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = getenv("CELERY_RESULT_BACKEND", "redis://127.0.0.1:6379/0")
+
+# Config Celery
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
+
+CELERY_BEAT_SCHEDULE = {
+    "check_product_stock": {
+        "task": "inventory.tasks.check_product_stock",
+        "schedule": crontab(minute="*/5"),
+    }
+}

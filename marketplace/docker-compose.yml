@@ -15,6 +15,8 @@ services:
       - ./.env
     depends_on:
       - db
+      - redis
+  
   db:
     image: postgres:13
     volumes:
@@ -25,6 +27,53 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
+  
+  redis:
+    image: redis:7-alpine
+  
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: celery_3b
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: beat_3b
+    command: /start-celerybeat
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: flower-3b
+    command: /start-flower
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    ports:
+      - 5555:5555
+    depends_on:
+      - redis
+      - db
 
 volumes:
   postgres_data:
