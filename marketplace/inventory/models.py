@@ -15,12 +15,6 @@ class Products(models.Model):
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=100)
 
-    def stock_in(self, quantity):
-        if quantity <= 0:
-            raise ValueError("Quantity must be greater than 0.")
-        self.stock += quantity
-        self.save(update_fields=["stock"])
-
     def stock_out(self, quantity):
         if quantity > self.stock:
             raise ValueError("Not enough stock.")
@@ -40,12 +34,8 @@ class Orders(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, default=None)
 
     def save(self, *args, **kwargs):
-        if self.transaction_type == IN:
-            self.product.stock_in(self.quantity)
-        elif self.transaction_type == OUT:
+        if self.transaction_type == OUT:
             self.product.stock_out(self.quantity)
-        else:
-            raise ValueError("Invalid transaction type.")
 
         super().save(*args, **kwargs)
 

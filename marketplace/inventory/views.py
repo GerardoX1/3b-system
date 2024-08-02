@@ -1,6 +1,12 @@
 from inventory.models import Orders, Products
-from inventory.serializers import OrdersSerializer, ProductsSerializer
+from inventory.serializers import (
+    AddStockSerializer,
+    OrdersSerializer,
+    ProductsSerializer,
+)
+from rest_framework import status
 from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.response import Response
 
 
 class CreateProducts(CreateAPIView):
@@ -10,7 +16,18 @@ class CreateProducts(CreateAPIView):
 
 class UpdateProducts(UpdateAPIView):
     queryset = Products.objects.all()
-    serializer_class = ProductsSerializer
+    serializer_class = AddStockSerializer
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_update(serializer, instance)
+            return Response({"status": "stock updated"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer, instance):
+        serializer.update(instance, serializer.validated_data)
 
 
 class CreateOrders(CreateAPIView):

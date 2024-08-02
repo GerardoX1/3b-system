@@ -1,6 +1,6 @@
 import pytest
-from applications.inventory.models import Products
 from django.utils import timezone
+from inventory.models import Products
 
 
 @pytest.mark.django_db
